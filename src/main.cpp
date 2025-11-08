@@ -1,6 +1,7 @@
 #include "main.h"
 #include "chassis.h"
 #include "autons.h"
+#include "subsystems.h"
 
 using namespace pros;
 

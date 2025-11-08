@@ -1,4 +1,5 @@
 #include "main.h"
+#include "autons.h"
 #include "chassis.h"
 
 const int LOOKAHEAD_DISTANCE = 6.0;
