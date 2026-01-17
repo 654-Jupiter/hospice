@@ -17,7 +17,32 @@ class Intake {
         void start_color_sort();
 };
 
+class Wing {
+    public:
+        Wing(char port);
+
+        void set_state(bool state);
+        void toggle();
+    private:
+        pros::adi::DigitalOut digital_out;
+
+        bool state;
+};
+
+class Scraper {
+    public:
+        Scraper(char port);
+
+        void set_state(bool state);
+        void toggle();
+    private:
+        pros::adi::DigitalOut digital_out;
+
+        bool state;
+};
+
 inline Intake intake(-2, 1, 10);
 
-inline pros::adi::DigitalOut scraper('c');
-inline pros::adi::DigitalOut wing('a');
+inline Scraper scraper('c');
+inline Wing wing('a');
+inline pros::adi::DigitalOut lift('b');

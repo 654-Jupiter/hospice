@@ -15,21 +15,19 @@ void blue_right() {
 }
 
 void blue_left() {
-	chassis.setPose(48, -24 + 6.75, 270);
-
 	intake.move(127);
 
-	wing.set_value(true);
+	wing.set_state(true);
 
 	chassis.moveToPose(24, -24, 270, 1500, {.minSpeed = 20, .earlyExitRange = 3}, false);
 
-	scraper.set_value(true);
+	scraper.set_state(true);
 
 	chassis.moveToPose(5, -44.5, 180, 2000, {}, true);
 
 	chassis.waitUntil(14.0);
 
-	scraper.set_value(false);
+	scraper.set_state(false);
 
 	// chassis.waitUntil(24.0);
 
@@ -39,30 +37,38 @@ void blue_left() {
 
 	pros::delay(200);
 
-	scraper.set_value(true);
+	scraper.set_state(true);
 
 	chassis.arcade(-40, 0);
 
 	pros::delay(500);
 
-	scraper.set_value(false);
+	scraper.set_state(false);
 
 	chassis.moveToPose(10, -10, 135, 1500, {.forwards = false}, false);
 
-	scraper.set_value(true);
+	wing.set_state(false);
 
-	chassis.moveToPoint(48, -43.5, 1500, {.maxSpeed = 40, .minSpeed = 10, .earlyExitRange = 2}, false);
-	chassis.moveToPose(56, -43.5, 90, 750, {}, false);
+	intake.move(127, true);
+
+	pros::delay(1000);
+
+	intake.move(127);
+
+	scraper.set_state(true);
+
+	chassis.moveToPoint(48, -48, 1500, {.maxSpeed = 40, .minSpeed = 10, .earlyExitRange = 2}, false);
+	chassis.moveToPose(56, -48, 90, 1000, {}, false);
 
 	chassis.arcade(60, 0);
 
-	pros::delay(750);
+	pros::delay(1000);
 
-	chassis.moveToPose(30, -43.5, 90, 10000, {.forwards = false}, false);
+	chassis.moveToPose(30, -48, 90, 10000, {.forwards = false}, false);
 
 	chassis.arcade(-60, 0);
 
-	wing.set_value(false);
+	wing.set_state(false);
 
 	pros::delay(1000);
 }

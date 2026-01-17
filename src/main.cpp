@@ -17,42 +17,68 @@ rd::Selector auton_selector("Autonomous Selector", {
 
 void initialize() {
 	chassis.calibrate();
+	auton_selector.on_select([](std::optional<rd::Selector::routine_t> auton) { if (auton) {
+		if (auton->name == "Blue Left") {
+			chassis.setPose(48, -24 + 6.75, 270);
+		}
+	}});
 }
 
 void disabled() {}
 
 void competition_initialize() {
-	lemlib::Pose pose = chassis.getPose();
-
-	while (true) {
-		if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-			chassis.calibrate();
-			chassis.setPose(pose);
-		}
-
-		if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-			pose = chassis.getPose();
-		}
-
-		pros::delay(20);
-	}
+	
 }
 
+lemlib::Pose pose = chassis.getPose();
+
 void autonomous() {
+	chassis.setPose(pose);
 	auton_selector.run_auton();
 }
 
 void opcontrol() {
+	//lift.set_value(true);
 
+	int32_t r1_pressed_duration = 0;
+	int32_t l1_pressed_duration = 0;
 
 	while (true) {
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			chassis.calibrate();
+			chassis.setPose(pose);
+			auton_selector.run_auton();
+		}
+
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+			pose = chassis.getPose();
+		}
+
 		bool r1_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+		if (r1_pressed) { r1_pressed_duration += 20; } else { r1_pressed_duration = 0; }
 		bool r2_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
 
+		if (r1_pressed_duration > 50) {
+			wing.set_state(true);
+		}
+
 		bool l1_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+		if (l1_pressed) { l1_pressed_duration += 20; } else { l1_pressed_duration = 0; }
 		bool l2_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
 
+		if (l1_pressed_duration > 50) {
+			wing.set_state(false);
+		}
+
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+			wing.toggle();
+		}
+
 		bool middle = r1_pressed && l2_pressed;
+
+		if (middle) {
+			wing.set_state(true);
+		}
 
 		int32_t intake_voltage = 
 			r1_pressed * 127 - 
@@ -61,8 +87,14 @@ void opcontrol() {
 		
 		intake.move(intake_voltage, middle);
 
-		if (r1_pressed) {
-			
+		bool right_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
+
+		if (right_pressed) {
+			intake.move(50, true);
+		}
+		
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+			scraper.toggle();
 		}
 
 		float throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
