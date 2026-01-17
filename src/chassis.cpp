@@ -1,47 +1,51 @@
 #include "main.h"
 
-pros::MotorGroup drive_left({1, 2, 3}, pros::MotorGears::blue);
-pros::MotorGroup drive_right({4, 5, 6}, pros::MotorGears::blue);
+pros::MotorGroup drive_left({-11, -12, -13}, pros::MotorGears::blue);
+pros::MotorGroup drive_right({17, 18, 19}, pros::MotorGears::blue);
 
 lemlib::Drivetrain drivetrain(
 	&drive_left,
 	&drive_right,
-	12.0,	// track width in inches
+	10.5,	// track width in inches
 	3.25,	// wheel diameter in inches
 	450.0,	// rpm
-	8.0	// horizontal drift
+	2.0	// horizontal drift
 );
 
 lemlib::ControllerSettings linear_settings(
-	10.0,	// kP
+	20.0,	// kP
 	0.0,	// kI
 	3.0,	// kD
 	0.0,	// antiWindup
-	1.0,	// smallError
+	0.5,	// smallError
 	100.0,	// smallErrorTimeout
-	3.0,	// largeError
+	2.5,	// largeError
 	500.0,	// largeErrorTimeout
-	5.0	// slew
+	0.0	// slew
 );
 
 lemlib::ControllerSettings angular_settings(
 	3.0,	// kP
 	0.0,	// kI
-	10.0,	// kD
+	30.0,	// kD
 	0.0,	// antiWindup
-	5.0,	// smallError
+	1.0,	// smallError
 	100.0,	// smallErrorTimeout
-	15.0,	// largeError
+	3.0,	// largeError
 	500.0,	// largeErrorTimeout
-	10.0	// slew
+	0.0	// slew
 );
 
+pros::Rotation horizontal_rotation(7);
+lemlib::TrackingWheel horizontal_tracker(&horizontal_rotation, -lemlib::Omniwheel::NEW_275, 0.375);
+pros::Imu imu(20);
+ 
 lemlib::OdomSensors sensors(
 	nullptr,			// vertical1
 	nullptr,			// vertical2
-	nullptr,			// horizontal1
+	&horizontal_tracker,			// horizontal1
 	nullptr,			// horizontal2
-	nullptr				// imu
+	&imu				// imu
 );
 
 lemlib::Chassis chassis(

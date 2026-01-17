@@ -42,7 +42,6 @@
 //#include "okapi/api.hpp"
 
 #include "lemlib/api.hpp"
-#include "lemlib-tarball/api.hpp"
 #include "robodash/api.h"
 
 /**

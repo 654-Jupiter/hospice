@@ -1,27 +1,68 @@
 #include "main.h"
 #include "chassis.h"
+#include "subsystems.h"
 
-const int LOOKAHEAD_DISTANCE = 6.0;
+void red_right() {
 
-ASSET(precision_test_txt)
-void precision_test() {
-	chassis.setPose(-48.0, 24.0, 90.0);
-	lemlib_tarball::Decoder precision_test_decoder(precision_test_txt);
-	// Arc from (-48, 24) to (-48, -24)
-	chassis.follow(precision_test_decoder["Path 1"], LOOKAHEAD_DISTANCE, 10000, true, false);
-	// Arc backwards from (-48, -24) to (-48, 24)
-	chassis.follow(precision_test_decoder["Path 2"], LOOKAHEAD_DISTANCE, 10000, false, false);
 }
 
-ASSET(accuracy_test_txt)
-void accuracy_test() {
-	chassis.setPose(-48.0, 24.0, 90.0);
-	lemlib_tarball::Decoder accuracy_test_decoder(accuracy_test_txt);
-	// Drive to (0, 36)
-	chassis.follow(accuracy_test_decoder["Path 1"], LOOKAHEAD_DISTANCE, 10000, true, false);
-	// Drive around field 5 times
-	for (int i = 0; i < 5; i++) {
-		// Drive full circle around field, returning to starting position
-		chassis.follow(accuracy_test_decoder["Path 2"], LOOKAHEAD_DISTANCE, 10000, true, false);
-	}
+void red_left() {
+
+}
+
+void blue_right() {
+
+}
+
+void blue_left() {
+	chassis.setPose(48, -24 + 6.75, 270);
+
+	intake.move(127);
+
+	wing.set_value(true);
+
+	chassis.moveToPose(24, -24, 270, 1500, {.minSpeed = 20, .earlyExitRange = 3}, false);
+
+	scraper.set_value(true);
+
+	chassis.moveToPose(5, -44.5, 180, 2000, {}, true);
+
+	chassis.waitUntil(14.0);
+
+	scraper.set_value(false);
+
+	// chassis.waitUntil(24.0);
+
+	// scraper.set_value(true);
+
+	chassis.waitUntilDone();
+
+	pros::delay(200);
+
+	scraper.set_value(true);
+
+	chassis.arcade(-40, 0);
+
+	pros::delay(500);
+
+	scraper.set_value(false);
+
+	chassis.moveToPose(10, -10, 135, 1500, {.forwards = false}, false);
+
+	scraper.set_value(true);
+
+	chassis.moveToPoint(48, -43.5, 1500, {.maxSpeed = 40, .minSpeed = 10, .earlyExitRange = 2}, false);
+	chassis.moveToPose(56, -43.5, 90, 750, {}, false);
+
+	chassis.arcade(60, 0);
+
+	pros::delay(750);
+
+	chassis.moveToPose(30, -43.5, 90, 10000, {.forwards = false}, false);
+
+	chassis.arcade(-60, 0);
+
+	wing.set_value(false);
+
+	pros::delay(1000);
 }

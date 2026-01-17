@@ -2,5 +2,7 @@
 
 #include "main.h"
 
-void precision_test();
-void accuracy_test();
+void red_right();
+void red_left();
+void blue_right();
+void blue_left();
