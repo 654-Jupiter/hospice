@@ -92,7 +92,7 @@ void blue_left() {
 
 	wing.set_state(true);
 
-	chassis.moveToPoint(48, -49, 2000, {.maxSpeed = 90}, false);
+	chassis.moveToPoint(48, -49, 2000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 10}, false);
 	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
 
 	chassis.arcade(40, 0);
@@ -111,15 +111,15 @@ void blue_left() {
 
 	intake.move(127, true);
 
-	pros::delay(100);
+	pros::delay(75);
 
 	intake.move(-127);
 
-	pros::delay(100);
+	pros::delay(75);
 
 	intake.move(127);
 
-	pros::delay(800);
+	pros::delay(1000);
 
 	intake.move(0);
 
@@ -129,7 +129,7 @@ void blue_left() {
 
 	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
 
-	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 60}, false);
+	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 70}, false);
 
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
@@ -139,11 +139,7 @@ void blue_left_elims() {
 
 	wing.set_state(true);
 
-	chassis.moveToPose(24, -24, 270, 1500, {}, false);
-
 	scraper.set_state(true);
-
-	pros::delay(400);
 
 	chassis.moveToPoint(48, -49, 2000, {.maxSpeed = 90}, false);
 	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
@@ -152,11 +148,17 @@ void blue_left_elims() {
 
 	intake.move(127);
 
-	pros::delay(1300);
+	for (int i = 0; i < 1100; i += 20) {
+		if (optical.get_hue() )
+		
+		pros::delay(20);
+	}
+
+	pros::delay(1100);
 
 	intake.move(127);
 
-	chassis.moveToPose(28, -49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+	chassis.moveToPose(30, -47, 90, 2000, {.forwards = false, .minSpeed = 20, .earlyExitRange = 2}, false);
 
 	chassis.arcade(-40, 0);
 
@@ -164,25 +166,25 @@ void blue_left_elims() {
 
 	intake.move(127, true);
 
-	pros::delay(100);
+	pros::delay(75);
 
 	intake.move(-127);
 
-	pros::delay(100);
+	pros::delay(75);
 
 	intake.move(127);
 
-	pros::delay(800);
+	pros::delay(900);
 
 	intake.move(0);
 
 	scraper.set_state(false);
 
-	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+	chassis.moveToPose(44, -47, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
 
-	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
+	chassis.moveToPose(28, -57, 90, 1500, {.forwards = false, .minSpeed = 10, .earlyExitRange = 1 }, false);
 
-	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 50}, false);
+	chassis.moveToPoint(9, -54, 1500, {.forwards = false, .maxSpeed = 60}, false);
 
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }

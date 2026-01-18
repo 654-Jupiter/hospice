@@ -18,7 +18,7 @@ rd::Selector auton_selector("Autonomous Selector", {
 	{"Wiggle", skills_wiggle, "", 120},
 });
 
-void initialize() {
+void initialize() {	
 	chassis.calibrate();
 	auton_selector.on_select([](std::optional<rd::Selector::routine_t> auton) { if (auton) {
 		if (auton->name == "Right") {
@@ -26,6 +26,9 @@ void initialize() {
 			lift.set_value(false);
 		} else if (auton->name == "Left") {
 			chassis.setPose(48, -24 + 6.75, 270);
+			lift.set_value(false);
+		} else if (auton->name == "Left Elims") {
+			chassis.setPose(48 + 6.75, -24, 180);
 			lift.set_value(false);
 		} else if (auton->name == "Skills") {
 			chassis.setPose(48, -24 + 6.75, 270);
