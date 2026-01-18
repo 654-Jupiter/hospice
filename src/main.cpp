@@ -9,17 +9,27 @@ Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Robodash UI
 rd::Selector auton_selector("Autonomous Selector", {
-	{"Red Right", red_right, "", 0},
-	{"Red Left", red_left, "", 0},
-	{"Blue Right", blue_right, "", 240},
-	{"Blue Left", blue_left, "", 240},
+	{"Drive", red_right, "", 120},
+	//{"Red Left", red_left, "", 0},
+	{"Right", blue_right, "", 0},
+	{"Left", blue_left, "", 240},
+	{"Left Elims", blue_left_elims, "", 240},
+	{"Skills", skills, "", 120},
+	{"Wiggle", skills_wiggle, "", 120},
 });
 
 void initialize() {
 	chassis.calibrate();
 	auton_selector.on_select([](std::optional<rd::Selector::routine_t> auton) { if (auton) {
-		if (auton->name == "Blue Left") {
+		if (auton->name == "Right") {
+			chassis.setPose(48, 24 - 6.75, 270);
+			lift.set_value(false);
+		} else if (auton->name == "Left") {
 			chassis.setPose(48, -24 + 6.75, 270);
+			lift.set_value(false);
+		} else if (auton->name == "Skills") {
+			chassis.setPose(48, -24 + 6.75, 270);
+			lift.set_value(false);
 		}
 	}});
 }
@@ -38,7 +48,9 @@ void autonomous() {
 }
 
 void opcontrol() {
-	//lift.set_value(true);
+	lift.set_value(true);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
 	int32_t r1_pressed_duration = 0;
 	int32_t l1_pressed_duration = 0;
@@ -47,7 +59,6 @@ void opcontrol() {
 		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			chassis.calibrate();
 			chassis.setPose(pose);
-			auton_selector.run_auton();
 		}
 
 		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
@@ -74,7 +85,7 @@ void opcontrol() {
 			wing.toggle();
 		}
 
-		bool middle = r1_pressed && l2_pressed;
+		bool middle = r1_pressed && l1_pressed;
 
 		if (middle) {
 			wing.set_state(true);
@@ -84,6 +95,9 @@ void opcontrol() {
 			r1_pressed * 127 - 
 			r2_pressed * 127 +
 			l1_pressed * 127;
+		
+		if (intake_voltage > 127) { intake_voltage = 127; }
+		if (intake_voltage < -127) { intake_voltage = -127; }
 		
 		intake.move(intake_voltage, middle);
 
