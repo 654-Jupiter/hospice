@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+#include "pros/distance.hpp"
 
 class Intake {
     public:
@@ -46,3 +47,10 @@ inline Intake intake(-2, 1, 10);
 inline Scraper scraper('c');
 inline Wing wing('a');
 inline pros::adi::DigitalOut lift('b');
+
+inline pros::Optical optical(3);
+
+inline pros::Distance distance_fr(8);
+inline pros::Distance distance_fl(5);
+inline pros::Distance distance_sr(6);
+inline pros::Distance distance_sl(14);

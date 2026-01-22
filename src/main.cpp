@@ -1,7 +1,12 @@
 #include "main.h"
 #include "chassis.h"
 #include "autons.h"
+#include "lemlib/chassis/odom.hpp"
+#include "lemlib/pose.hpp"
+#include "pros/rtos.hpp"
 #include "subsystems.h"
+#include "macros.h"
+#include <cstdio>
 
 using namespace pros;
 
@@ -10,47 +15,33 @@ Controller controller(pros::E_CONTROLLER_MASTER);
 // Robodash UI
 rd::Selector auton_selector("Autonomous Selector", {
 	{"Drive", red_right, "", 120},
-	//{"Red Left", red_left, "", 0},
+	{"Red Left", red_left, "", 0},
 	{"Right", blue_right, "", 0},
 	{"Left", blue_left, "", 240},
-	{"Left Elims", blue_left_elims, "", 240},
 	{"Skills", skills, "", 120},
-	{"Wiggle", skills_wiggle, "", 120},
 });
 
 void initialize() {	
 	chassis.calibrate();
-	auton_selector.on_select([](std::optional<rd::Selector::routine_t> auton) { if (auton) {
-		if (auton->name == "Right") {
-			chassis.setPose(48, 24 - 6.75, 270);
-			lift.set_value(false);
-		} else if (auton->name == "Left") {
-			chassis.setPose(48, -24 + 6.75, 270);
-			lift.set_value(false);
-		} else if (auton->name == "Left Elims") {
-			chassis.setPose(48 + 6.75, -24, 180);
-			lift.set_value(false);
-		} else if (auton->name == "Skills") {
-			chassis.setPose(48, -24 + 6.75, 270);
-			lift.set_value(false);
-		}
-	}});
 }
 
 void disabled() {}
 
-void competition_initialize() {
-	
-}
-
-lemlib::Pose pose = chassis.getPose();
+void competition_initialize() {}
 
 void autonomous() {
-	chassis.setPose(pose);
-	auton_selector.run_auton();
+	chassis.setPose(-48, 24, 0);
+	move_to_match_loader(-72, 48, 270);
+	// until_blue();
+	// while (true) {
+	// 	printf("%f\n", optical.get_hue());
+	// 	pros::delay(100);
+	// }
 }
 
 void opcontrol() {
+	autonomous();
+
 	lift.set_value(true);
 
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
@@ -59,15 +50,6 @@ void opcontrol() {
 	int32_t l1_pressed_duration = 0;
 
 	while (true) {
-		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-			chassis.calibrate();
-			chassis.setPose(pose);
-		}
-
-		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-			pose = chassis.getPose();
-		}
-
 		bool r1_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
 		if (r1_pressed) { r1_pressed_duration += 20; } else { r1_pressed_duration = 0; }
 		bool r2_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);

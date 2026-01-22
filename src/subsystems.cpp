@@ -2,7 +2,8 @@
 #include "subsystems.h"
 
 Intake::Intake(int8_t a, int8_t b, int8_t c) : motor_a(a), motor_b(b), motor_c(c) {
-    
+    this->start_anti_jam();
+    this->start_color_sort();
 }
 
 void Intake::move(int32_t volts, bool middle) {
