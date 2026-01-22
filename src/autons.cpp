@@ -148,12 +148,6 @@ void blue_left_elims() {
 
 	intake.move(127);
 
-	for (int i = 0; i < 1100; i += 20) {
-		if (optical.get_hue() )
-		
-		pros::delay(20);
-	}
-
 	pros::delay(1100);
 
 	intake.move(127);
