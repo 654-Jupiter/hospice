@@ -9,16 +9,16 @@ lemlib::Drivetrain drivetrain(
 	10.5,	// track width in inches
 	3.25,	// wheel diameter in inches
 	450.0,	// rpm
-	4.0	// horizontal drift
+	2.0	// horizontal drift
 );
 
 lemlib::ControllerSettings linear_settings(
-	20.0,	// kP
-	0.1,	// kI
-	64.0,	// kD
+	10,	// kP
+	0,	// kI
+	3,	// kD
 	0.0,	// antiWindup
 	1.0,	// smallError
-	100.0,	// smallErrorTimeout
+	300.0,	// smallErrorTimeout
 	3.0,	// largeError
 	500.0,	// largeErrorTimeout
 	0.0	// slew
@@ -26,12 +26,12 @@ lemlib::ControllerSettings linear_settings(
 
 lemlib::ControllerSettings angular_settings(
 	3,	// kP
-	0.01,	// kI
-	25,	// kD
+	0,	// kI
+	20,	// kD
 	0,	// antiWindup
-	3.0,	// smallError
-	100.0,	// smallErrorTimeout
-	5.0,	// largeError
+	1.0,	// smallError
+	300.0,	// smallErrorTimeout
+	3.0,	// largeError
 	500.0,	// largeErrorTimeout
 	0.0	// slew
 );

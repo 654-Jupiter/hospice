@@ -14,10 +14,11 @@ Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Robodash UI
 rd::Selector auton_selector("Autonomous Selector", {
-	{"Drive", red_right, "", 120},
+	{"RUN THIS GRAYSON", solo_red_right, "", 120},
+	{"Red Right", red_right, "", 0},
 	{"Red Left", red_left, "", 0},
-	{"Right", blue_right, "", 0},
-	{"Left", blue_left, "", 240},
+	{"Blue Right", blue_right, "", 240},
+	{"Blue Left", blue_left, "", 240},
 	{"Skills", skills, "", 120},
 });
 
@@ -30,13 +31,7 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-	chassis.setPose(-48, 24, 0);
-	move_to_match_loader(-72, 48, 270);
-	// until_blue();
-	// while (true) {
-	// 	printf("%f\n", optical.get_hue());
-	// 	pros::delay(100);
-	// }
+	auton_selector.run_auton();
 }
 
 void opcontrol() {

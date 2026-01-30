@@ -75,8 +75,6 @@ void move_to_long_goal(float x, float y, float theta) {
     chassis.arcade(0, 0);
 
     intake.move(127);
-
-    pros::delay(10000);
 }
 
 void move_to_middle_goal(float x, float y, float theta) {
@@ -149,5 +147,5 @@ void until_blue() {
 }
 
 void until_red() {
-
+    
 }
