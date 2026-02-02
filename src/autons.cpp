@@ -12,7 +12,7 @@ void match_load(bool full = false) {
     scraper.set_state(true);
     wing.set_state(true);
 
-    chassis.arcade(80, 0);
+    chassis.arcade(60, 0);
 
     // Wait until you are inside the matchloader
     for (int i = 0; i < 1000 /* timout in ms */; i += 20) { 
@@ -23,7 +23,7 @@ void match_load(bool full = false) {
     }
 
     // Apply less voltage
-    chassis.arcade(60, 0);
+    chassis.arcade(40, 0);
 
     // Begin intaking
     intake.move(127);
@@ -77,7 +77,7 @@ void solo_red_right() {
 
     // Long Goal #1
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-34, -48, 270, 10000, {.forwards = false}, false);
+    chassis.moveToPose(-36, -48, 270, 1500, {.forwards = false}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
@@ -149,57 +149,61 @@ void solo_red_right() {
 
     intake.move(127, true);
 
-    // // A distance reset may be required before entering match loader, as by this point the robot's tracking
-    // // is likely to by far enough off to cause problems.
+    // A distance reset may be required before entering match loader, as by this point the robot's tracking
+    // is likely to by far enough off to cause problems.
 
-    // // Align with Match Loader #2
-    // chassis.moveToPose(-44, 48, 315, 10000, {.minSpeed = 10, .earlyExitRange = 0.5}, false);
+    // Align with Match Loader #2
+    chassis.moveToPose(-44, 48, 315, 10000, {.minSpeed = 10, .earlyExitRange = 0.5}, false);
 
-    // chassis.turnToHeading(270, 10000, {}, false);
+    chassis.turnToHeading(270, 10000, {}, false);
 
-    // float wall_error = (distance_sr.get_distance() / 25.4) - 21;
+    scraper.set_state(true);
 
-    // printf("%f\n", wall_error);
+    float wall_error = (distance_sr.get_distance() / 25.4) - 21;
 
-    // chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
+    printf("%f\n", wall_error);
 
-    // // Match Loader #2
-    // chassis.moveToPose(-54, 48, 270, 10000, {}, false);
+    chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
 
-    // match_load();
+    // Match Loader #2
+    chassis.moveToPose(-54, 47, 270, 10000, {}, false);
 
-    // // Long Goal #2
-    // // This motion needs to exit before it gets to the long goal
-    // chassis.moveToPose(-32, 48, 270, 10000, {.forwards = false}, false);
+    match_load();
 
-    // // Constant voltage application to ensure contact with long goal
-    // chassis.arcade(-30, 0);
+    // Long Goal #2
+    // This motion needs to exit before it gets to the long goal
+    chassis.moveToPose(-36, 47.5, 270, 1500, {.forwards = false}, false);
 
-    // // Apply voltage for a minimum of 100 ms, to ensure good long goal alignment
-    // pros::delay(100);
+    // Constant voltage application to ensure contact with long goal
+    chassis.arcade(-30, 0);
 
-    // // Wait until the robot hits the long goal
-    // while (lemlib::getLocalSpeed().y < -1.0) { pros::delay(20); }
+    // Apply voltage for a minimum of 100 ms, to ensure good long goal alignment
+    pros::delay(100);
 
-    // // ----------------
-    // //
-    // // MARK: Push
-    // //
-    // // ----------------
+    // Wait until the robot hits the long goal
+    while (lemlib::getLocalSpeed().y < -1.0) { pros::delay(20); }
 
-    // pros::delay(100000);
+    scraper.set_state(false);
 
-    // // Exit long goal before cross to avoid getting stuck
-    // chassis.arcade(30, 0);
+    // ----------------
+    //
+    // MARK: Push
+    //
+    // ----------------
 
-    // // Allow time to exit long goal
-    // pros::delay(400);
+    pros::delay(100000);
 
-    // // Enter long goal
-    // chassis.moveToPose(-24, 60, 270, 10000, {}, false);
+    // Exit long goal before cross to avoid getting stuck
+    chassis.arcade(30, 0);
 
-    // // Push
-    // chassis.moveToPose(0, 60, 270, 10000, {}, false);
+    // Allow time to exit long goal
+    pros::delay(400);
+
+    // Enter long goal
+    chassis.moveToPose(-24, 60, 270, 10000, {}, false);
+
+    // Push
+    chassis.moveToPose(0, 60, 270, 10000, {}, false);
 }
 
 // MARK: Skills

@@ -14,7 +14,8 @@ Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Robodash UI
 rd::Selector auton_selector("Autonomous Selector", {
-	{"RUN THIS GRAYSON", solo_red_right, "", 120},
+	{"Z TEAM", solo_red_right, "", 120},
+	{"B TEAM", blue_left, "", 120},
 	{"Red Right", red_right, "", 0},
 	{"Red Left", red_left, "", 0},
 	{"Blue Right", blue_right, "", 240},
@@ -31,7 +32,8 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-	auton_selector.run_auton();
+	lift.set_value(false);
+	solo_red_right();
 }
 
 void opcontrol() {
