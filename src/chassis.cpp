@@ -13,7 +13,7 @@ lemlib::Drivetrain drivetrain(
 );
 
 lemlib::ControllerSettings linear_settings(
-	10,	// kP
+	14,	// kP
 	0,	// kI
 	3,	// kD
 	0.0,	// antiWindup

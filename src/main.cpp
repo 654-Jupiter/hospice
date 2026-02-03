@@ -32,14 +32,11 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-	lift.set_value(false);
 	solo_red_right();
 }
 
 void opcontrol() {
 	autonomous();
-
-	lift.set_value(true);
 
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
