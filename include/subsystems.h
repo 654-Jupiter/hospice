@@ -1,6 +1,7 @@
 #pragma once
 #include "main.h"
 #include "pros/distance.hpp"
+#include "pros/motors.hpp"
 
 class Intake {
     public:
@@ -42,6 +43,7 @@ class Scraper {
         bool state;
 };
 
+inline pros::Motor intake_c(10);
 inline Intake intake(-2, 1, 10);
 
 inline Scraper scraper('c');

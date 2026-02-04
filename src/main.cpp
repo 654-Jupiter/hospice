@@ -25,6 +25,8 @@ rd::Selector auton_selector("Autonomous Selector", {
 
 void initialize() {	
 	chassis.calibrate();
+	pros::delay(100);
+
 }
 
 void disabled() {}

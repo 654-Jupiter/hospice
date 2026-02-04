@@ -6,7 +6,7 @@
 
 void match_load(bool full = false) {
     const float DISTANCE = 15.0;
-    const int HALF_TIME = 450;
+    const int HALF_TIME = 550;
     const int FULL_TIME = 800;
 
     scraper.set_state(true);
@@ -38,6 +38,12 @@ void unjam() {
     intake.move(127);
 }
 
+void unjam_middle() {
+    intake.move(-127);
+    pros::delay(200);
+    intake.move(127);
+}
+
 void red_right() {
     
 }
@@ -51,32 +57,7 @@ void blue_right() {
 }
 
 void blue_left() {
-    chassis.setPose(-48, -24, 90);
-
-    wing.set_state(true);
-
-    intake.move(127);
-    chassis.moveToPose(-24, -24, 90, 1500, {.lead = 0.3}, false);
-
-    intake.move(0);
-    scraper.set_state(true);
-
-    chassis.moveToPose(-12, -12, 45, 1500, {.lead = 0.3}, false);
-
-    //add voltage
-    intake.move(-127);
-    pros::delay(1000);
-
-    // Match Loader #1
-    chassis.moveToPose(-54, -48, 270, 1500, {.forwards = false, .lead = 0.3}, false);
-
-    pros::delay(100);
-
-
-    intake.move(127);
-    match_load();
-
-
+    
 }
 
 // MARK: Solo Left
@@ -102,7 +83,7 @@ void solo_red_right() {
 
     // Long Goal #1
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-30, -47, 270, 2000, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1.0}, false);
+    chassis.moveToPose(-30, -48.5, 270, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
@@ -128,10 +109,17 @@ void solo_red_right() {
     chassis.setPose(-25, -48, chassis.getPose().theta);
 
     // Exit long goal before cross to avoid getting stuck
-    chassis.arcade(30, 60);
+    chassis.arcade(60, 0);
 
     // Allow time to exit long goal
-    pros::delay(400);
+    pros::delay(200);
+
+    // Small turn after exit
+    chassis.arcade(20, 30);
+
+    // Allow time to exit long goal
+    pros::delay(200);
+
 
     // Start intaking for blocks
     wing.set_state(true);
@@ -159,48 +147,56 @@ void solo_red_right() {
     chassis.waitUntilDone();
 
     // Middle Goal
-    chassis.moveToPose(-12, 10, 315, 10000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
+    chassis.moveToPose(-12, 10, 315, 10000, {.forwards = false, .minSpeed = 20}, false);
 
     // Constant voltage application to ensure contact with middle goal
     chassis.arcade(-30, 0);
 
-    // Apply voltage for a minimum of 100 ms, to ensure good middle goal alignment
+    //Apply voltage for a minimum of 100 ms, to ensure good middle goal alignment
     pros::delay(100);
 
     // Wait until the robot hits the middle goal
     while (lemlib::getLocalSpeed().y < -1.0) { pros::delay(20); }
 
-    unjam();
+    unjam_middle();
 
     intake.move(127, true);
 
-    pros::delay(1000);
+    pros::delay(500);
 
+    intake.move(0);
+    intake_c.move(-127);
 
-    // A distance reset may be required before entering match loader, as by this point the robot's tracking
-    // is likely to by far enough off to cause problems.
+    //A distance reset may be required before entering match loader, as by this point the robot's tracking
+    //is likely to by far enough off to cause problems.
 
     // Align with Match Loader #2
-    chassis.moveToPose(-44, 47, 315, 10000, {.minSpeed = 10, .earlyExitRange = 0.5}, false);
+    chassis.moveToPose(-44, 45, 315, 10000, {.maxSpeed = 60, .minSpeed = 10, .earlyExitRange = 2});
 
-    chassis.turnToHeading(270, 10000, {.minSpeed = 5, .earlyExitRange = 0.1}, false);
+    chassis.waitUntil(10);
+
+    intake_c.brake();
+
+    chassis.waitUntilDone();
+
+    chassis.turnToHeading(270, 10000, {.minSpeed = 20, .earlyExitRange = 1}, false);
 
     scraper.set_state(true);
 
-    float wall_error = (distance_sr.get_distance() / 25.4) - 21;
+    // float wall_error = (distance_sr.get_distance() / 25.4) - 23;
 
-    printf("%f\n", wall_error);
+    // printf("%f\n", wall_error);
 
-    chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
+    //chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
 
     // Match Loader #2
-    chassis.moveToPose(-54, 47, 270, 10000, {}, false);
+    chassis.moveToPoint(-52, 45, 4000, {.minSpeed = 20, .earlyExitRange = 1}, false);
 
     match_load();
 
     // Long Goal #2
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-34, 47.5, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
+    chassis.moveToPose(-34, 45, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
@@ -216,11 +212,9 @@ void solo_red_right() {
     intake.move(127);
     unjam();
 
-    pros::delay(1000);
+    pros::delay(1500);
 
     scraper.set_state(false);
-
-
 
     // ----------------
     //

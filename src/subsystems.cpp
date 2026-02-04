@@ -9,7 +9,7 @@ Intake::Intake(int8_t a, int8_t b, int8_t c) : motor_a(a), motor_b(b), motor_c(c
 void Intake::move(int32_t volts, bool middle) {
     motor_a.move(volts);
     motor_b.move(volts);
-    motor_c.move(middle ? volts * -0.25 : volts);
+    motor_c.move(middle ? volts * -0.35 : volts);
 }
 
 const int ANTI_JAM_DT = 20;
