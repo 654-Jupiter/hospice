@@ -8,6 +8,7 @@ void red_right();
 void red_left();
 void blue_right();
 void blue_left();
+void blue_left_remix();
 void solo_red_right();
 
 void skills();

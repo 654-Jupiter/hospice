@@ -1,10 +1,14 @@
 #include "lemlib/chassis/odom.hpp"
+#include "lemlib/pid.hpp"
 #include "main.h"
 #include "chassis.h"
 #include "pros/rtos.hpp"
 #include "subsystems.h"
 
 pros::Controller troller(pros::E_CONTROLLER_MASTER);
+
+lemlib::PID new_linear_pid(14, 0, 3);
+lemlib::PID new_angular_pid(3, 0, 20);
 
 lemlib::ControllerSettings new_linear_settings(
 	14,	// kP
@@ -30,6 +34,9 @@ lemlib::ControllerSettings new_angular_settings(
 	0.0	// slew
 );
 
+lemlib::PID old_linear_pid(20, 0, 3);
+lemlib::PID old_angular_pid(3, 0, 30);
+
 lemlib::ControllerSettings old_linear_settings(
 	20.0,	// kP
 	0.0,	// kI
@@ -53,14 +60,6 @@ lemlib::ControllerSettings old_angular_settings(
 	500.0,	// largeErrorTimeout
 	0.0	// slew
 );
-
-void new_pid() {
-
-}
-
-void old_pid() {
-
-}
 
 void wait_and_debug() {
     lemlib::Pose pose = chassis.getPose();
@@ -126,11 +125,88 @@ void red_left() {
 }
 
 void blue_right() {
+    chassis.setPose(48, 24 - 6.25, 270);
 
+    intake_a.move(127);
+
+	wing.set_state(true);
+
+	chassis.moveToPose(24, 24, 270, 1500, {}, false);
+
+	scraper.set_state(true);
+
+	pros::delay(400);
+
+    scraper.set_state(false);
+
+	chassis.moveToPose(12, 10, 225, 2000, {.maxSpeed = 60}, false);
+
+	chassis.arcade(20, 0);
+
+	wing.set_state(false);
+
+	intake.move(-60);
+
+	pros::delay(500);
+
+	intake.move(-100);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(true);
+
+	wing.set_state(true);
+
+	chassis.moveToPoint(48, 42, 3000, {.forwards = false, .maxSpeed = 60}, false);
+	chassis.turnToHeading(90, 1250, {}, false);
+
+	chassis.arcade(40, 0);
+
+	intake.move(127);
+
+	pros::delay(900);
+
+	intake.move(127);
+
+	chassis.moveToPose(28, 45, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+
+	chassis.arcade(-40, 0);
+
+	wing.set_state(false);
+
+	intake.move(127, true);
+
+	pros::delay(75);
+
+	intake.move(-127);
+
+	pros::delay(75);
+
+	intake.move(127);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(false);
+
+    chassis.arcade(60, 0);
+
+    pros::delay(200);
+
+	chassis.moveToPose(50, 45, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+
+	chassis.moveToPose(28, 35, 90, 1500, {.forwards = false}, false);
+
+	chassis.moveToPoint(9, 37, 1500, {.forwards = false, .maxSpeed = 70}, false);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
 void blue_left() {
-    chassis.setPose(48, -24 + 6.5, 270);
+    chassis.setPose(48, -24 + 6.25, 270);
 
     intake.move(127);
 
@@ -162,18 +238,18 @@ void blue_left() {
 
 	wing.set_state(true);
 
-	chassis.moveToPoint(48, -48, 2000, {.maxSpeed = 70, .minSpeed = 20, .earlyExitRange = 10}, false);
+	chassis.moveToPoint(48, -47, 2000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 10}, false);
 	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
 
 	chassis.arcade(40, 0);
 
 	intake.move(127);
 
-	pros::delay(800);
+	pros::delay(1300);
 
 	intake.move(127);
 
-	chassis.moveToPose(28, -46, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+	chassis.moveToPose(28, -49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
 
 	chassis.arcade(-40, 0);
 
@@ -194,6 +270,199 @@ void blue_left() {
 	intake.move(0);
 
 	scraper.set_state(false);
+
+	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+
+	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
+
+	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 70}, false);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+}
+
+void blue_left_push() {
+    chassis.setPose(48, -24 + 6.25, 270);
+
+    intake.move(127);
+
+	wing.set_state(true);
+
+    scraper.set_state(true);
+
+	chassis.moveToPoint(48, -49, 2000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 10}, false);
+	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
+
+	chassis.arcade(40, 0);
+
+	intake.move(127);
+
+	pros::delay(1300);
+
+	intake.move(127);
+
+	chassis.moveToPose(28, -49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+
+	chassis.arcade(-40, 0);
+
+	wing.set_state(false);
+
+	intake.move(127, true);
+
+	pros::delay(75);
+
+	intake.move(-127);
+
+	pros::delay(75);
+
+	intake.move(127);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(false);
+
+	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+
+	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
+
+	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 70}, false);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+}
+
+void blue_right_push() {
+    chassis.setPose(48, 24 - 6.25, 270);
+
+    intake.move(127);
+
+	wing.set_state(true);
+
+    scraper.set_state(true);
+
+	chassis.moveToPoint(48, 49, 2000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 10}, false);
+	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
+
+	chassis.arcade(40, 0);
+
+	intake.move(127);
+
+	pros::delay(1300);
+
+	intake.move(127);
+
+	chassis.moveToPose(28, 49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+
+	chassis.arcade(-40, 0);
+
+	wing.set_state(false);
+
+	intake.move(127, true);
+
+	pros::delay(75);
+
+	intake.move(-127);
+
+	pros::delay(75);
+
+	intake.move(127);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(false);
+
+	chassis.moveToPose(44, 49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+
+	chassis.moveToPose(28, 60, 90, 1500, {.forwards = false }, false);
+
+	chassis.moveToPoint(9, 56, 1500, {.forwards = false, .maxSpeed = 70}, false);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+}
+
+void blue_left_remix() {
+    // Start
+
+    chassis.setPose(48 - 6.25, -24, 180);
+
+    intake.move(127);
+
+	wing.set_state(true);
+
+    // Match Loader
+
+	chassis.moveToPoint(48, -49, 2000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 10}, false);
+	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
+
+	chassis.arcade(40, 0);
+
+	intake.move(127);
+
+	pros::delay(1300);
+
+	intake.move(127);
+
+    // Long Goal
+
+	chassis.moveToPose(28, -49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+
+	chassis.arcade(-40, 0);
+
+	wing.set_state(false);
+
+	intake.move(127, true);
+
+	pros::delay(75);
+
+	intake.move(-127);
+
+	pros::delay(75);
+
+	intake.move(127);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(false);
+
+    chassis.arcade(60, 0);
+
+    pros::delay(200);
+
+    // Blocks
+
+	chassis.moveToPose(24, -24, 270, 1500, {}, false);
+
+	scraper.set_state(true);
+
+	pros::delay(400);
+
+    // Middle Goal
+
+	chassis.moveToPose(12, -14, 135, 2000, {.forwards = false, .maxSpeed = 60}, false);
+
+	chassis.arcade(-20, 0);
+
+	wing.set_state(false);
+
+	intake.move(-60);
+
+	pros::delay(500);
+
+	intake.move(127, true);
+
+	pros::delay(1500);
+
+	intake.move(0);
+
+	scraper.set_state(true);
+
+	wing.set_state(true);
+
+    // Push
 
 	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
 
@@ -227,7 +496,7 @@ void solo_red_right() {
 
     // Long Goal #1
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-30, -48, 270, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
+    chassis.moveToPose(-30, -47, 270, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
@@ -259,7 +528,7 @@ void solo_red_right() {
     pros::delay(200);
 
     // Small turn after exit
-    chassis.arcade(20, 30);
+    chassis.arcade(30, 45);
 
     // Allow time to exit long goal
     pros::delay(200);
@@ -271,9 +540,13 @@ void solo_red_right() {
     intake.move(127);
 
     // Blocks #1
-    chassis.moveToPoint(-26, -24, 10000, {.maxSpeed = 60, .minSpeed = 20, .earlyExitRange = 2}, false);
+    chassis.moveToPoint(-24, -24, 10000, {.maxSpeed = 70, .minSpeed = 20, .earlyExitRange = 2}, false);
+
+    scraper.set_state(true);
 
     chassis.turnToHeading(0, 10000, {.minSpeed = 20, .earlyExitRange = 2}, false);
+
+    scraper.set_state(false);
 
     // ----------------
     //
@@ -282,7 +555,7 @@ void solo_red_right() {
     // ----------------
     
     // Blocks #2
-    chassis.moveToPoint(-24, 24, 10000, {.maxSpeed = 80});
+    chassis.moveToPoint(-24, 24, 10000, {.maxSpeed = 120, .minSpeed = 10, .earlyExitRange = 0.5});
 
     chassis.waitUntil(40);
 
@@ -291,7 +564,7 @@ void solo_red_right() {
     chassis.waitUntilDone();
 
     // Middle Goal
-    chassis.moveToPose(-12, 10, 315, 10000, {.forwards = false, .minSpeed = 20}, false);
+    chassis.moveToPose(-14, 10, 315, 10000, {.forwards = false, .minSpeed = 20, .earlyExitRange = 0.5}, false);
 
     // Constant voltage application to ensure contact with middle goal
     chassis.arcade(-30, 0);
@@ -306,7 +579,7 @@ void solo_red_right() {
 
     intake.move(127, true);
 
-    pros::delay(500);
+    pros::delay(400);
 
     intake.move(0);
     intake_c.move(-127);
@@ -315,7 +588,7 @@ void solo_red_right() {
     //is likely to by far enough off to cause problems.
 
     // Align with Match Loader #2
-    chassis.moveToPose(-44, 45.5, 315, 10000, {.maxSpeed = 60, .minSpeed = 10, .earlyExitRange = 2});
+    chassis.moveToPose(-44, 46.5, 315, 10000, {.maxSpeed = 75, .minSpeed = 10, .earlyExitRange = 2});
 
     chassis.waitUntil(10);
 
@@ -334,19 +607,25 @@ void solo_red_right() {
     //chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
 
     // Match Loader #2
-    chassis.moveToPoint(-52, 44, 4000, {}, false);
+    chassis.moveToPoint(-52, 45, 4000, {.minSpeed = 20, .earlyExitRange = 1}, false);
+
+    intake.move(127);
 
     match_load();
 
     // Long Goal #2
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-34, 42.5, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
+    chassis.moveToPose(-34, 46, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
+
+    intake_c.move(-127);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
 
     // Apply voltage for a minimum of 100 ms, to ensure good long goal alignment
     pros::delay(100);
+
+    intake_c.move(0);
 
     // Wait until the robot hits the long goal
     while (lemlib::getLocalSpeed().y < -1.0) { pros::delay(20); }

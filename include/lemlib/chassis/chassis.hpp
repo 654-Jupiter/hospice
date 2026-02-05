@@ -913,6 +913,9 @@ class Chassis {
         // Custom exposed stuff
         Drivetrain drivetrain;
         OdomSensors sensors;
+
+        ControllerSettings lateralSettings;
+        ControllerSettings angularSettings;
     protected:
         /**
          * @brief Indicates that this motion is queued and blocks current task until this motion reaches front of queue
@@ -927,9 +930,7 @@ class Chassis {
         bool motionQueued = false;
 
         float distTraveled = 0;
-
-        ControllerSettings lateralSettings;
-        ControllerSettings angularSettings;
+        
         DriveCurve* throttleCurve;
         DriveCurve* steerCurve;
 

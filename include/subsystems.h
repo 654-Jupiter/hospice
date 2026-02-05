@@ -43,6 +43,7 @@ class Scraper {
         bool state;
 };
 
+inline pros::Motor intake_a(-2);
 inline pros::Motor intake_c(10);
 inline Intake intake(-2, 1, 10);
 

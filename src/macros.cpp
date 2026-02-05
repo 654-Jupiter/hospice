@@ -3,6 +3,7 @@
 #include "main.h"
 #include "chassis.h"
 #include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "subsystems.h"
 #include <cmath>
 #include <cstdio>
@@ -123,13 +124,43 @@ void move_to_match_loader(float x, float y, float theta) {
 }
 
 void until_blue() {
-    intake.move(127);
     optical.set_led_pwm(100);
     while (!(optical.get_hue() > 200 && optical.get_hue() < 300) && optical.get_proximity() < 100) { pros::delay(20); }
+    optical.set_led_pwm(0);
+}
+
+void score_red() {
+    intake.move(127);
+    optical.set_led_pwm(100);
+    for (int i = 0; i < 1250; i += 10) {
+        if ((optical.get_hue() > 200 && optical.get_hue() < 300) && optical.get_proximity() < 100) {
+            break;
+        }
+
+        pros::delay(20);
+    }
     optical.set_led_pwm(0);
     intake.move(0);
 }
 
 void until_red() {
-    
+    intake.move(127);
+    optical.set_led_pwm(100);
+    while (!(optical.get_hue() > 300 || optical.get_hue() < 100) && optical.get_proximity() < 50) { pros::delay(20); }
+    optical.set_led_pwm(0);
+    intake.move(0);
+}
+
+void score_blue() {
+    intake.move(127);
+    optical.set_led_pwm(100);
+    for (int i = 0; i < 1250; i += 10) {
+        if ((optical.get_hue() > 300 || optical.get_hue() < 100) && optical.get_proximity() < 40) {
+            break;
+        }
+
+        pros::delay(20);
+    }
+    optical.set_led_pwm(0);
+    intake.move(0);
 }
