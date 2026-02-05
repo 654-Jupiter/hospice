@@ -4,6 +4,55 @@
 #include "pros/rtos.hpp"
 #include "subsystems.h"
 
+pros::Controller troller(pros::E_CONTROLLER_MASTER);
+
+lemlib::ControllerSettings new_linear_settings(
+	14,	// kP
+	0,	// kI
+	3,	// kD
+	0.0,	// antiWindup
+	1.0,	// smallError
+	300.0,	// smallErrorTimeout
+	3.0,	// largeError
+	500.0,	// largeErrorTimeout
+	0.0	// slew
+);
+
+lemlib::ControllerSettings new_angular_settings(
+	3,	// kP
+	0,	// kI
+	20,	// kD
+	0,	// antiWindup
+	1.0,	// smallError
+	300.0,	// smallErrorTimeout
+	3.0,	// largeError
+	500.0,	// largeErrorTimeout
+	0.0	// slew
+);
+
+void new_pid() {
+
+}
+
+void old_pid() {
+
+}
+
+void wait_and_debug() {
+    lemlib::Pose pose = chassis.getPose();
+    printf("TRACKING: \n");
+    printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
+    printf("SENSORS: \n");
+    printf("Distances: FL: %f, FR %f, SL: %f, SR: %f\n", 
+        distance_fl.get_distance() / 25.4, 
+        distance_fr.get_distance() / 25.4, 
+        distance_sl.get_distance() / 25.4, 
+        distance_sr.get_distance() / 25.4
+    );
+    while (!troller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { pros::delay(20); }
+}
+
+
 void match_load(bool full = false) {
     const float DISTANCE = 15.0;
     const int HALF_TIME = 550;
@@ -57,7 +106,78 @@ void blue_right() {
 }
 
 void blue_left() {
-    
+    chassis.setPose(48, -24 + 6.5, 270);
+
+    intake.move(127);
+
+	wing.set_state(true);
+
+	chassis.moveToPose(24, -24, 270, 1500, {}, false);
+
+	scraper.set_state(true);
+
+	pros::delay(400);
+
+	chassis.moveToPose(12, -14, 135, 2000, {.forwards = false, .maxSpeed = 60}, false);
+
+	chassis.arcade(-20, 0);
+
+	wing.set_state(false);
+
+	intake.move(-60);
+
+	pros::delay(500);
+
+	intake.move(127, true);
+
+	pros::delay(1500);
+
+	intake.move(0);
+
+	scraper.set_state(true);
+
+	wing.set_state(true);
+
+	chassis.moveToPoint(48, -48, 2000, {.maxSpeed = 70, .minSpeed = 20, .earlyExitRange = 10}, false);
+	chassis.turnToHeading(90, 750, {.minSpeed = 10, .earlyExitRange = 1}, false);
+
+	chassis.arcade(40, 0);
+
+	intake.move(127);
+
+	pros::delay(800);
+
+	intake.move(127);
+
+	chassis.moveToPose(28, -46, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+
+	chassis.arcade(-40, 0);
+
+	wing.set_state(false);
+
+	intake.move(127, true);
+
+	pros::delay(75);
+
+	intake.move(-127);
+
+	pros::delay(75);
+
+	intake.move(127);
+
+	pros::delay(1000);
+
+	intake.move(0);
+
+	scraper.set_state(false);
+
+	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+
+	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
+
+	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 70}, false);
+
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
 // MARK: Solo Left
@@ -83,7 +203,7 @@ void solo_red_right() {
 
     // Long Goal #1
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-30, -48.5, 270, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
+    chassis.moveToPose(-30, -48, 270, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 0.5}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);
@@ -138,7 +258,7 @@ void solo_red_right() {
     // ----------------
     
     // Blocks #2
-    chassis.moveToPoint(-24, 24, 10000, {.maxSpeed = 80, .minSpeed = 40, .earlyExitRange = 2});
+    chassis.moveToPoint(-24, 24, 10000, {.maxSpeed = 80});
 
     chassis.waitUntil(40);
 
@@ -171,7 +291,7 @@ void solo_red_right() {
     //is likely to by far enough off to cause problems.
 
     // Align with Match Loader #2
-    chassis.moveToPose(-44, 45, 315, 10000, {.maxSpeed = 60, .minSpeed = 10, .earlyExitRange = 2});
+    chassis.moveToPose(-44, 45.5, 315, 10000, {.maxSpeed = 60, .minSpeed = 10, .earlyExitRange = 2});
 
     chassis.waitUntil(10);
 
@@ -190,13 +310,13 @@ void solo_red_right() {
     //chassis.setPose(chassis.getPose().x, chassis.getPose().y - wall_error, chassis.getPose().theta);
 
     // Match Loader #2
-    chassis.moveToPoint(-52, 45, 4000, {.minSpeed = 20, .earlyExitRange = 1}, false);
+    chassis.moveToPoint(-52, 44, 4000, {}, false);
 
     match_load();
 
     // Long Goal #2
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-34, 45, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
+    chassis.moveToPose(-34, 42.5, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
 
     // Constant voltage application to ensure contact with long goal
     chassis.arcade(-30, 0);

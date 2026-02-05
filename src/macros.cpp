@@ -8,22 +8,6 @@
 #include <cstdio>
 #include <numbers>
 
-pros::Controller troller(pros::E_CONTROLLER_MASTER);
-
-void wait_and_debug() {
-    lemlib::Pose pose = chassis.getPose();
-    printf("TRACKING: \n");
-    printf("X: %f, Y: %f, Theta: %f\n", pose.x, pose.y, pose.theta);
-    printf("SENSORS: \n");
-    printf("Distances: FL: %f, FR %f, SL: %f, SR: %f\n", 
-        distance_fl.get_distance() / 25.4, 
-        distance_fr.get_distance() / 25.4, 
-        distance_sl.get_distance() / 25.4, 
-        distance_sr.get_distance() / 25.4
-    );
-    while (!troller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { pros::delay(20); }
-}
-
 void move_to_long_goal(float x, float y, float theta) {
     lemlib::Pose target_pose(x, y, theta);
 
