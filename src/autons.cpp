@@ -125,7 +125,7 @@ void red_left() {
 }
 
 void blue_right() {
-    chassis.setPose(48, 24 - 6.25, 270);
+    //chassis.setPose(48, 24 - 6.25, 270);
 
     intake_a.move(127);
 
@@ -160,7 +160,7 @@ void blue_right() {
 	wing.set_state(true);
 
 	chassis.moveToPoint(48, 42, 3000, {.forwards = false, .maxSpeed = 60}, false);
-	chassis.turnToHeading(90, 1250, {}, false);
+	chassis.turnToHeading(90, 1250, {.maxSpeed = 50, .minSpeed = 10, .earlyExitRange = 0.5}, false);
 
 	chassis.arcade(40, 0);
 
@@ -206,7 +206,7 @@ void blue_right() {
 }
 
 void blue_left() {
-    chassis.setPose(48, -24 + 6.25, 270);
+    //chassis.setPose(48, -24 + 6.25, 270);
 
     intake.move(127);
 
@@ -476,7 +476,7 @@ void blue_left_remix() {
 // MARK: Solo Left
 
 void solo_red_right() {
-    chassis.setPose(-48, -21, 180);
+    // chassis.setPose(-48, -21, 180);
 
     // ----------------
     //

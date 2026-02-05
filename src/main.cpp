@@ -1,12 +1,7 @@
 #include "main.h"
 #include "chassis.h"
 #include "autons.h"
-#include "lemlib/chassis/odom.hpp"
-#include "lemlib/pose.hpp"
-#include "pros/rtos.hpp"
 #include "subsystems.h"
-#include "macros.h"
-#include <cstdio>
 
 using namespace pros;
 
@@ -14,31 +9,44 @@ Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Robodash UI
 rd::Selector auton_selector("Autonomous Selector", {
-	{"Z TEAM", solo_red_right, "", 120},
-	{"B TEAM", blue_left, "", 120},
 	{"Red Right", red_right, "", 0},
 	{"Red Left", red_left, "", 0},
 	{"Blue Right", blue_right, "", 240},
 	{"Blue Left", blue_left, "", 240},
-	{"Skills", skills, "", 120},
+	{"Solo Red", solo_red_right, "", 240},
 });
 
 void initialize() {	
 	chassis.calibrate();
-	pros::delay(100);
-
+	auton_selector.on_select([](std::optional<rd::Selector::routine_t> auton) { if (auton) {
+		if (auton->name == "Blue Right") {
+			chassis.setPose(48, 24 - 6.75, 270);
+			lift.set_value(false);
+		} else if (auton->name == "Blue Left") {
+			chassis.setPose(48, -24 + 6.75, 270);
+			lift.set_value(false);
+		} else if (auton->name == "Solo Red") {
+			chassis.setPose(-48, -21, 180);
+			lift.set_value(false);
+		}
+	}});
 }
 
 void disabled() {}
 
-void competition_initialize() {}
+void competition_initialize() {
+	
+}
+
+lemlib::Pose pose = chassis.getPose();
 
 void autonomous() {
-	solo_red_right();
+	chassis.setPose(pose);
+	auton_selector.run_auton();
 }
 
 void opcontrol() {
-	autonomous();
+	lift.set_value(true);
 
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
@@ -46,6 +54,15 @@ void opcontrol() {
 	int32_t l1_pressed_duration = 0;
 
 	while (true) {
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			chassis.calibrate();
+			chassis.setPose(pose);
+		}
+
+		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+			pose = chassis.getPose();
+		}
+
 		bool r1_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
 		if (r1_pressed) { r1_pressed_duration += 20; } else { r1_pressed_duration = 0; }
 		bool r2_pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
