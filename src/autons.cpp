@@ -30,6 +30,30 @@ lemlib::ControllerSettings new_angular_settings(
 	0.0	// slew
 );
 
+lemlib::ControllerSettings old_linear_settings(
+	20.0,	// kP
+	0.0,	// kI
+	3.0,	// kD
+	0.0,	// antiWindup
+	0.5,	// smallError
+	100.0,	// smallErrorTimeout
+	2.5,	// largeError
+	500.0,	// largeErrorTimeout
+	0.0	// slew
+);
+
+lemlib::ControllerSettings old_angular_settings(
+	3.0,	// kP
+	0.0,	// kI
+	30.0,	// kD
+	0.0,	// antiWindup
+	1.0,	// smallError
+	100.0,	// smallErrorTimeout
+	3.0,	// largeError
+	500.0,	// largeErrorTimeout
+	0.0	// slew
+);
+
 void new_pid() {
 
 }
