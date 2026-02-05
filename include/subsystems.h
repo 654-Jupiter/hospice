@@ -44,6 +44,7 @@ class Scraper {
 };
 
 inline pros::Motor intake_a(-2);
+inline pros::Motor intake_b(1);
 inline pros::Motor intake_c(10);
 inline Intake intake(-2, 1, 10);
 

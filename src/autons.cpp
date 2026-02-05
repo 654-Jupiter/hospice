@@ -249,7 +249,7 @@ void blue_left() {
 
 	intake.move(127);
 
-	chassis.moveToPose(28, -49, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
+	chassis.moveToPose(28, -47, 90, 2000, {.forwards = false, .maxSpeed = 100}, false);
 
 	chassis.arcade(-40, 0);
 
@@ -271,9 +271,9 @@ void blue_left() {
 
 	scraper.set_state(false);
 
-	chassis.moveToPose(44, -49, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
+	chassis.moveToPose(44, -47, 90, 1000, {.minSpeed = 10, .earlyExitRange = 2}, false);
 
-	chassis.moveToPose(28, -60, 90, 1500, {.forwards = false }, false);
+	chassis.moveToPose(28, -59, 90, 1500, {.forwards = false }, false);
 
 	chassis.moveToPoint(9, -56, 1500, {.forwards = false, .maxSpeed = 70}, false);
 
@@ -579,7 +579,7 @@ void solo_red_right() {
 
     intake.move(127, true);
 
-    pros::delay(400);
+    pros::delay(800);
 
     intake.move(0);
     intake_c.move(-127);
@@ -588,7 +588,7 @@ void solo_red_right() {
     //is likely to by far enough off to cause problems.
 
     // Align with Match Loader #2
-    chassis.moveToPose(-44, 46.5, 315, 10000, {.maxSpeed = 75, .minSpeed = 10, .earlyExitRange = 2});
+    chassis.moveToPose(-48, 46.5, 315, 10000, {.maxSpeed = 80, .minSpeed = 10, .earlyExitRange = 2});
 
     chassis.waitUntil(10);
 
@@ -615,7 +615,7 @@ void solo_red_right() {
 
     // Long Goal #2
     // This motion needs to exit before it gets to the long goal
-    chassis.moveToPose(-34, 46, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
+    chassis.moveToPose(-34, 45, 270, 1500, {.forwards = false, .minSpeed = 20, .earlyExitRange = 1}, false);
 
     intake_c.move(-127);
 

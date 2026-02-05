@@ -53,6 +53,8 @@ void opcontrol() {
 	int32_t r1_pressed_duration = 0;
 	int32_t l1_pressed_duration = 0;
 
+	int32_t middle_duration = 0;
+
 	while (true) {
 		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			chassis.calibrate();
@@ -86,7 +88,10 @@ void opcontrol() {
 		bool middle = r1_pressed && l1_pressed;
 
 		if (middle) {
+			middle_duration += 20;
 			wing.set_state(true);
+		} else {
+			middle_duration = 0;
 		}
 
 		int32_t intake_voltage = 
@@ -103,6 +108,12 @@ void opcontrol() {
 
 		if (right_pressed) {
 			intake.move(50, true);
+		}
+
+		if (middle_duration < 200 && middle_duration != 0) {
+			intake_a.move(0);
+			intake_b.move(-127);
+			intake_c.move(-127);
 		}
 		
 		if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
